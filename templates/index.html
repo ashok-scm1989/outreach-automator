@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Outreach Automator - Bulk Email & WhatsApp</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+
+  <!-- Navbar -->
+  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center font-black text-white text-xl shadow-lg shadow-purple-500/25">
+          🚀
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-white flex items-center gap-2">
+            Outreach Automator
+            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">Bulk Sender</span>
+          </h1>
+          <p class="text-xs text-slate-400">Excel to Personalized Email & WhatsApp Dispatcher</p>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Bar -->
+      <div class="flex items-center gap-3 text-xs">
+        <div class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-2">
+          <span class="text-slate-400">Active File:</span>
+          <span id="navFileName" class="font-semibold text-white truncate max-w-[150px]">No file loaded</span>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-2">
+          <span class="text-slate-400">Emails:</span>
+          <span id="navEmailCount" class="font-bold text-indigo-400">0</span>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl flex items-center gap-2">
+          <span class="text-slate-400">WhatsApp:</span>
+          <span id="navPhoneCount" class="font-bold text-emerald-400">0</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
+
+    <!-- Tab Navigation -->
+    <div class="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-3">
+      <button onclick="switchTab('upload')" id="tabBtnUpload" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/30">
+        📁 1. Upload & Leads Data
+      </button>
+      <button onclick="switchTab('email')" id="tabBtnEmail" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
+        📧 2. Bulk Email Campaign
+      </button>
+      <button onclick="switchTab('whatsapp')" id="tabBtnWhatsapp" class="tab-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
+        💬 3. Bulk WhatsApp Sender
+      </button>
+      <button onclick="switchTab('leadfinder')" id="tabBtnLeadfinder" class="tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-purple-950/80 text-purple-300 hover:bg-purple-900/80 border border-purple-700/60 flex items-center gap-1.5 shadow-lg shadow-purple-950/40">
+        <span class="w-2 h-2 rounded-full bg-purple-400 animate-ping"></span>
+        🔍 4. Google Lead Finder
+      </button>
+      <button onclick="exportUpdatedExcel()" class="ml-auto px-4 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-1.5 shadow-lg shadow-emerald-600/20 active:scale-95">
+        📥 Export Results (Excel)
+      </button>
+    </div>
+
+    <!-- TAB 1: UPLOAD & DATA -->
+    <div id="tabUpload" class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Upload Card -->
+        <div class="md:col-span-1 bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+          <div>
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <span>📤</span> Upload Excel / CSV
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">Upload your leads file (.xlsx, .xls, .csv). Names, emails, and phone numbers will be auto-detected.</p>
+          </div>
+
+          <div class="border-2 border-dashed border-slate-700 hover:border-indigo-500 rounded-2xl p-6 text-center cursor-pointer transition-colors bg-slate-950/50" onclick="document.getElementById('fileInput').click()">
+            <input type="file" id="fileInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="handleFileSelect(event)">
+            <div class="text-3xl mb-2">📄</div>
+            <p id="uploadPrompt" class="text-xs font-medium text-slate-300">Click to choose or drag & drop Excel file</p>
+            <p class="text-[10px] text-slate-500 mt-1">Supports XLSX, XLS, CSV</p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Default Country Code (for WhatsApp)</label>
+            <select id="defaultCountryCode" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+              <option value="91" selected>+91 (India)</option>
+              <option value="1">+1 (USA / Canada)</option>
+              <option value="44">+44 (United Kingdom)</option>
+              <option value="971">+971 (UAE / Dubai)</option>
+              <option value="61">+61 (Australia)</option>
+            </select>
+          </div>
+
+          <button onclick="uploadFile()" id="btnUploadSubmit" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center gap-2">
+            Upload & Process Leads
+          </button>
+
+          <!-- Ashok Test Leads Quick Load -->
+          <div class="pt-3 border-t border-slate-800 space-y-2">
+            <button onclick="loadSampleLeads()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-purple-600/25 transition-all flex items-center justify-center gap-2">
+              ⚡ 1-Click Load Ashok's Test Leads (4 Rows)
+            </button>
+            <a href="/api/download-sample" download="Ashok_Test_Leads.xlsx" class="w-full py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-[11px] transition-all flex items-center justify-center gap-1.5 border border-slate-700">
+              ⬇️ Download Ashok_Test_Leads.xlsx
+            </a>
+          </div>
+        </div>
+
+        <!-- Detected Placeholders & Guidelines Card -->
+        <div class="md:col-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl flex flex-col justify-between space-y-4">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <span>🏷️</span> Available Template Variables
+            </h3>
+            <p class="text-xs text-slate-400 mt-1">You can use these tags in your Email or WhatsApp messages. They will automatically be replaced with each lead's data!</p>
+            
+            <div id="placeholdersList" class="flex flex-wrap gap-2 mt-3">
+              <span class="px-2.5 py-1 rounded-lg bg-indigo-950 border border-indigo-800/60 text-indigo-300 text-xs font-mono">{Name}</span>
+              <span class="px-2.5 py-1 rounded-lg bg-indigo-950 border border-indigo-800/60 text-indigo-300 text-xs font-mono">{Company}</span>
+              <span class="px-2.5 py-1 rounded-lg bg-indigo-950 border border-indigo-800/60 text-indigo-300 text-xs font-mono">{Email}</span>
+              <span class="px-2.5 py-1 rounded-lg bg-indigo-950 border border-indigo-800/60 text-indigo-300 text-xs font-mono">{Phone}</span>
+            </div>
+          </div>
+
+          <!-- Sample Excel Format Card -->
+          <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+            <span class="text-xs font-bold text-slate-300">Recommended Excel Columns:</span>
+            <div class="grid grid-cols-4 gap-2 mt-2 text-[11px] font-mono text-slate-400">
+              <div class="bg-slate-900 p-1.5 rounded text-center border border-slate-800">Name</div>
+              <div class="bg-slate-900 p-1.5 rounded text-center border border-slate-800">Email</div>
+              <div class="bg-slate-900 p-1.5 rounded text-center border border-slate-800">Phone / Mobile</div>
+              <div class="bg-slate-900 p-1.5 rounded text-center border border-slate-800">Company</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Leads Preview Table -->
+      <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+        <div class="flex justify-between items-center">
+          <h3 class="text-sm font-bold text-white">Leads Preview (<span id="previewCount">0</span> rows)</h3>
+          <span class="text-xs text-slate-400">Showing first 50 leads</span>
+        </div>
+
+        <div class="overflow-x-auto rounded-2xl border border-slate-800 custom-scrollbar max-h-96">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-950 uppercase text-[10px] text-slate-400 border-b border-slate-800 sticky top-0">
+              <tr>
+                <th class="px-4 py-3">#</th>
+                <th class="px-4 py-3">Name</th>
+                <th class="px-4 py-3">Email</th>
+                <th class="px-4 py-3">WhatsApp / Phone</th>
+                <th class="px-4 py-3">Company</th>
+                <th class="px-4 py-3">Email Status</th>
+                <th class="px-4 py-3">WA Status</th>
+              </tr>
+            </thead>
+            <tbody id="leadsTableBody" class="divide-y divide-slate-800/60 bg-slate-900/40">
+              <tr>
+                <td colspan="7" class="text-center py-8 text-slate-500">No Excel file loaded. Upload a file above to preview leads.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: BULK EMAIL -->
+    <div id="tabEmail" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Left: SMTP Credentials -->
+        <div class="lg:col-span-1 bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+          <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <span>⚙️</span> Sender Email Settings
+          </h2>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Your Name (Display Name)</label>
+            <input type="text" id="senderName" placeholder="e.g. John Doe"
+              class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Your Email (Gmail / Work Email)</label>
+            <input type="email" id="senderEmail" placeholder="yourname@gmail.com"
+              class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+          </div>
+
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-xs font-medium text-slate-400">Gmail App Password (16-char)</label>
+              <a href="https://myaccount.google.com/apppasswords" target="_blank" class="text-[10px] text-indigo-400 hover:underline">Get Password ↗</a>
+            </div>
+            <input type="password" id="senderPassword" placeholder="xxxx xxxx xxxx xxxx"
+              class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+            <p class="text-[10px] text-slate-500 mt-1">Never use regular password. Use a Google App Password.</p>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">SMTP Host</label>
+              <input type="text" id="smtpHost" value="smtp.gmail.com"
+                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Port</label>
+              <input type="number" id="smtpPort" value="587"
+                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Min Delay (s)</label>
+              <input type="number" id="minDelay" value="5" min="3"
+                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Max Delay (s)</label>
+              <input type="number" id="maxDelay" value="8" min="5"
+                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+            </div>
+          </div>
+
+          <!-- Test Email Box -->
+          <div class="pt-2 border-t border-slate-800 space-y-2">
+            <label class="block text-xs font-bold text-slate-300">Test Your Setup First</label>
+            <div class="flex gap-2">
+              <input type="email" id="testEmailTo" value="m1ashok1989@gmail.com" placeholder="your-own-email@gmail.com"
+                class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white">
+              <button onclick="sendTestEmail()" id="btnTestEmail" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-white border border-slate-700">
+                Send Test
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Message Template & Progress -->
+        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-5">
+          <div class="flex flex-wrap justify-between items-center gap-2">
+            <div>
+              <h2 class="text-base font-bold text-white flex items-center gap-2">
+                <span>✍️</span> Email Composer
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">Personalize with <code class="text-indigo-400">{Name}</code>, <code class="text-indigo-400">{Company}</code>.</p>
+            </div>
+            <!-- Pitch Selector -->
+            <div class="w-full sm:w-auto">
+              <select id="emailPitchSelector" onchange="applyEmailPitch(this.value)" class="w-full bg-purple-950/60 border border-purple-500/50 rounded-xl px-3 py-1.5 text-xs text-purple-200 font-semibold focus:outline-none focus:border-purple-400">
+                <option value="re_us">🏠 Real Estate (US) - Speed to Lead & Showings</option>
+                <option value="re_in">🏢 Real Estate (India) - WhatsApp Brochure & Site Visits</option>
+                <option value="gym">🏋️ Gym App - Member Renewals & Trials</option>
+                <option value="cod">📦 E-Commerce - COD Verification & Anti-RTO</option>
+                <option value="software">💻 Freelance - Custom Automation & Web Apps</option>
+                <option value="custom">✍️ Custom Blank / Template</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Email Subject</label>
+            <input type="text" id="emailSubject" value="Quick question regarding {Company}, {Name}"
+              class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white font-semibold">
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Email Body (Plain Text or HTML)</label>
+            <textarea id="emailBody" rows="7"
+              class="w-full bg-slate-950 border border-slate-700 rounded-xl p-4 text-xs text-slate-200 font-mono leading-relaxed focus:outline-none focus:border-indigo-500">Hi {Name},
+
+I came across {Company} and was really impressed by your work. 
+
+I built a lightweight automation tool specifically for teams like yours that handles lead follow-ups and saves 2+ hours daily.
+
+Would you be open to a 60-second video demo showing how it works?
+
+Best regards,
+{Your Name}</textarea>
+          </div>
+
+          <!-- Progress and Action Buttons -->
+          <div class="pt-4 border-t border-slate-800 space-y-3">
+            <div class="flex justify-between items-center text-xs">
+              <span class="text-slate-400 font-semibold">Campaign Status: <strong id="emailStatusText" class="text-white">Idle</strong></span>
+              <span id="emailProgressNumbers" class="text-indigo-400 font-bold">0 / 0</span>
+            </div>
+
+            <div class="w-full bg-slate-950 rounded-full h-3 overflow-hidden border border-slate-800">
+              <div id="emailProgressBar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <div class="flex gap-3">
+              <button onclick="startEmailCampaign()" id="btnStartEmail" class="flex-1 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition-all flex items-center justify-center gap-2">
+                🚀 Launch Email Campaign
+              </button>
+              <button onclick="stopEmailCampaign()" id="btnStopEmail" class="px-5 py-3 rounded-xl bg-rose-950 hover:bg-rose-900 text-rose-300 border border-rose-800 font-bold text-xs transition-all">
+                🛑 Stop
+              </button>
+            </div>
+          </div>
+
+          <!-- Terminal Logs -->
+          <div class="bg-slate-950 border border-slate-800 rounded-2xl p-3 font-mono text-[11px] text-slate-400 h-40 overflow-y-auto custom-scrollbar" id="emailLogsBox">
+            <div class="text-slate-600">// Live campaign logs will appear here...</div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 3: BULK WHATSAPP -->
+    <div id="tabWhatsapp" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Left: WhatsApp Composer & Mode -->
+        <div class="lg:col-span-1 bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+          <div class="flex flex-wrap justify-between items-center gap-2">
+            <h2 class="text-base font-bold text-white flex items-center gap-2">
+              <span>💬</span> WhatsApp Composer
+            </h2>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-emerald-400 mb-1 flex items-center gap-1.5">
+              <span>💡</span> Select Industry Pitch Template
+            </label>
+            <select id="waPitchSelector" onchange="applyWaPitch(this.value)" class="w-full bg-emerald-950/60 border border-emerald-500/50 rounded-xl px-3 py-1.5 text-xs text-emerald-200 font-semibold focus:outline-none focus:border-emerald-400">
+              <option value="re_us">🏠 Real Estate (US) - Instant Tour Booking</option>
+              <option value="re_in">🏢 Real Estate (India) - WhatsApp Brochure & Site Visits</option>
+              <option value="gym">🏋️ Gym App - Free Trial & Renewal Reminders</option>
+              <option value="cod">📦 E-Commerce - COD Verification</option>
+              <option value="software">💻 Freelance - Custom Automation Systems</option>
+              <option value="custom">✍️ Custom Template</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Message Template</label>
+            <textarea id="waMessageTemplate" rows="8"
+              class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-slate-200 font-mono leading-relaxed focus:outline-none focus:border-emerald-500">Hi {Name}, hope you're doing well!
+
+I noticed your work at {Company}. We recently built a simple automation solution that helps local businesses follow up with leads in under 60 seconds.
+
+Would love to share a quick 1-minute demo if you're interested. Let me know!</textarea>
+          </div>
+
+          <div class="p-3 bg-emerald-950/40 border border-emerald-800/60 rounded-xl text-emerald-300 text-[11px] space-y-1">
+            <span class="font-bold flex items-center gap-1">🛡️ 100% Ban Protection</span>
+            <p class="text-slate-400">Messages open through your verified WhatsApp Web. Each message is customized with {Name} so WhatsApp never flags your number.</p>
+          </div>
+
+          <button onclick="generateWhatsAppQueue()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/30 transition-all">
+            ⚡ Generate WhatsApp Queue
+          </button>
+        </div>
+
+        <!-- Right: Dispatch Queue Table -->
+        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+          <div class="flex justify-between items-center">
+            <div>
+              <h3 class="text-sm font-bold text-white">WhatsApp Queue (<span id="waQueueCount">0</span> Leads Ready)</h3>
+              <p class="text-xs text-slate-400">Click "Send on WhatsApp Web". It opens chat with prefilled text!</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="waSentCounter" class="text-xs font-bold text-emerald-400 bg-emerald-950 px-2.5 py-1 rounded-lg border border-emerald-800">0 Sent</span>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto rounded-2xl border border-slate-800 custom-scrollbar max-h-[500px]">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-950 uppercase text-[10px] text-slate-400 border-b border-slate-800 sticky top-0">
+                <tr>
+                  <th class="px-3 py-3">#</th>
+                  <th class="px-3 py-3">Recipient</th>
+                  <th class="px-3 py-3">Phone</th>
+                  <th class="px-3 py-3">Message Preview</th>
+                  <th class="px-3 py-3 text-right">Action</th>
+                </tr>
+              </thead>
+              <tbody id="waTableBody" class="divide-y divide-slate-800/60 bg-slate-900/40">
+                <tr>
+                  <td colspan="5" class="text-center py-12 text-slate-500">Click "Generate WhatsApp Queue" to create 1-click links for all leads.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TAB 4: GOOGLE LEAD FINDER -->
+    <div id="tabLeadfinder" class="hidden space-y-6">
+      
+      <!-- Top Overview Banner -->
+      <div class="bg-gradient-to-r from-purple-900/40 via-indigo-900/30 to-slate-900 border border-purple-800/40 rounded-3xl p-6 shadow-xl flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <span class="px-2.5 py-1 rounded-full bg-purple-500/20 text-purple-300 text-[10px] font-bold uppercase tracking-wider border border-purple-500/30">
+            Automated Prospecting Engine
+          </span>
+          <h2 class="text-xl font-black text-white mt-2 flex items-center gap-2">
+            <span>🔍</span> Real Estate Lead & Email Extractor
+          </h2>
+          <p class="text-xs text-slate-300 mt-1">Extract real estate agents, brokers, and company emails directly into Excel with genuine contact details.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href="/api/download-leads-excel" id="btnDownloadExtractedExcel" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 flex items-center gap-2 transition-all">
+            <span>📥 Download Excel</span>
+          </a>
+          <button onclick="switchTab('email')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 flex items-center gap-1.5 transition-all">
+            <span>📧 Launch Email Campaign ↗</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Left Column: Search & Scraper Controls -->
+        <div class="lg:col-span-1 space-y-6">
+
+          <!-- Method 1: Instant City Real Estate Leads -->
+          <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <span>🏙️</span> City Real Estate Extractor
+              </h3>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 font-semibold">1-Click</span>
+            </div>
+            <p class="text-xs text-slate-400">Select target real estate hub to generate leads with verified agent emails & phone numbers.</p>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Target City / Market</label>
+              <select id="leadCitySelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                <option value="Austin" selected>Austin, TX (USA)</option>
+                <option value="Miami">Miami, FL (USA)</option>
+                <option value="Delhi NCR">Delhi NCR / Gurgaon / Noida (India)</option>
+                <option value="Mumbai">Mumbai / Bandra / Worli (India)</option>
+                <option value="Dubai">Dubai / Marina / Downtown (UAE)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Target Category</label>
+              <select id="leadNicheSelect" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white">
+                <option value="agents" selected>Residential Real Estate Agents</option>
+                <option value="brokers">Commercial Property Brokers</option>
+                <option value="luxury">Luxury Home Specialists</option>
+              </select>
+            </div>
+
+            <button onclick="generateCityLeads()" id="btnGenerateCityLeads" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-purple-600/30 transition-all flex items-center justify-center gap-2">
+              <span>⚡ Extract City Leads & Write to Excel</span>
+            </button>
+          </div>
+
+          <!-- Method 2: Website / Brokerage Email Hunter -->
+          <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <span>🌐</span> Agency Website Email Hunter
+              </h3>
+              <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-semibold">Deep Crawler</span>
+            </div>
+            <p class="text-xs text-slate-400">Enter any real estate agency website. The tool crawls contact, about, and team pages for emails.</p>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-400 mb-1">Agency Website URL</label>
+              <input type="text" id="targetWebsiteInput" value="austinluxuryrealty.com" placeholder="e.g. austinluxuryrealty.com"
+                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono">
+            </div>
+
+            <button onclick="crawlAgencyWebsite()" id="btnCrawlWebsite" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs border border-slate-700 transition-all flex items-center justify-center gap-2">
+              <span>🔎 Crawl & Extract Agent Emails</span>
+            </button>
+          </div>
+
+          <!-- Method 3: Google Maps Tips -->
+          <div class="bg-slate-950 border border-slate-800 rounded-3xl p-5 text-xs text-slate-400 space-y-2">
+            <div class="font-bold text-slate-200 flex items-center gap-1.5">
+              <span>💡</span> Google Maps Fast Scraping Tip
+            </div>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+              Open Google Maps in Chrome, search <code class="text-indigo-300">"Real estate agents in Austin"</code>. Install free Chrome extension <b>"Instant Data Scraper"</b> to download 100 leads to Excel in 1 click, then upload here!
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Extracted Leads Preview Table -->
+        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
+          <div class="flex flex-wrap justify-between items-center gap-2">
+            <div>
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <span>📋</span> Discovered Real Estate Leads (<span id="extractedCount">0</span> Found)
+              </h3>
+              <p class="text-xs text-slate-400">All leads saved to Excel. Ready for instant Email or WhatsApp outreach.</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <span id="extractedStatusTag" class="text-[11px] font-mono px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-400">
+                Ready to search
+              </span>
+            </div>
+          </div>
+
+          <div class="overflow-x-auto rounded-2xl border border-slate-800 custom-scrollbar max-h-[520px]">
+            <table class="w-full text-left text-xs text-slate-300">
+              <thead class="bg-slate-950 uppercase text-[10px] text-slate-400 border-b border-slate-800 sticky top-0">
+                <tr>
+                  <th class="px-3 py-3">#</th>
+                  <th class="px-3 py-3">Agent Name</th>
+                  <th class="px-3 py-3">Email Address</th>
+                  <th class="px-3 py-3">Phone</th>
+                  <th class="px-3 py-3">Agency / Company</th>
+                  <th class="px-3 py-3">Website</th>
+                </tr>
+              </thead>
+              <tbody id="extractedTableBody" class="divide-y divide-slate-800/60 bg-slate-900/40">
+                <tr>
+                  <td colspan="6" class="text-center py-16 text-slate-500">
+                    Select a city or enter an agency website on the left and click "Extract" to generate leads!
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Bottom Action Buttons -->
+          <div class="pt-4 border-t border-slate-800 flex flex-wrap justify-between items-center gap-3">
+            <span class="text-xs text-slate-400 font-medium">Ready to contact these leads?</span>
+            <div class="flex gap-2">
+              <button onclick="switchTab('email')" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition-all">
+                📧 Open Email Composer ({Name} prefilled)
+              </button>
+              <button onclick="switchTab('whatsapp')" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/30 transition-all">
+                💬 Open WhatsApp Sender
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    let currentLeads = [];
+    let pollingInterval = null;
+
+    const PITCH_TEMPLATES = {
+      re_us: {
+        emailSubject: "Quick question regarding {Company}'s buyer inquiries, {Name}",
+        emailBody: `Hi {Name},
+
+I came across your listings at {Company} — great portfolio!
+
+One common issue top-producing agents face is speed-to-lead. When prospective buyers inquire from Zillow, Realtor.com, or Facebook at odd hours, following up in under 5 minutes while you're busy showing properties is nearly impossible.
+
+I built a lightweight automation tool specifically for real estate agents that:
+1. Instantly engages new inquiries via text/WhatsApp in under 60 seconds.
+2. Answers basic property questions (price, square footage, availability).
+3. Automatically books qualified private showings directly into your calendar.
+
+Would you be open to a 2-minute video demo showing how it works for {Company}?
+
+Best regards,
+Ashok Kumar`,
+        waMessage: `Hi {Name}, noticed your listings at {Company}!
+
+We built a lightweight assistant for real estate agents that engages buyer inquiries within 60 seconds and books property showings directly on your calendar.
+
+Saves 2+ hours daily and ensures zero leads go cold.
+
+Would you be open to a quick 1-minute video demo?`
+      },
+      re_in: {
+        emailSubject: "{Company} ke buyer leads ke liye instant WhatsApp brochure & site visits",
+        emailBody: `Hi {Name},
+
+I came across your real estate properties and projects at {Company}.
+
+Real estate me sabse bada issue hota hai follow-up speed. 99acres, Magicbricks ya ads se inquiries aati hain, lekin unhe WhatsApp par brochure bhejne aur site visit schedule karne me 2-3 ghante lag jaate hain, tab tak buyer kisi aur broker ke pass chala jata hai.
+
+Humne real estate consultants aur brokers ke liye ek simple WhatsApp automation tool banaya hai jo:
+1. Naye buyer inquiry aate hi 30 seconds me WhatsApp par project brochure & pricing bhej deta hai.
+2. Buyer se budget aur 2BHK/3BHK requirement confirm karke automatically Site Visit book kar deta hai.
+
+Kya aap 2 minute ka quick video demo dekhna pasand karenge ki yeh {Company} ke liye kaise kaam karega?
+
+Best regards,
+Ashok Kumar`,
+        waMessage: `Hi {Name}, noticed your properties at {Company}!
+
+Humne real estate brokers ke liye ek simple tool banaya hai jo buyer inquiry aate hi 30 second me WhatsApp par project brochure bhej kar site visit book kar deta hai.
+
+Kya aap 1 minute ka demo video dekhna chahenge?`
+      },
+      gym: {
+        emailSubject: "Automating member renewals & free trial bookings for {Company}",
+        emailBody: `Hi {Name},
+
+I came across {Company} and noticed your fitness center!
+
+Managing walk-in inquiries, tracking monthly fee renewals, and chasing expiring memberships takes hours of manual calling every week.
+
+We built a simple Gym Management & WhatsApp Attendance system that automatically sends WhatsApp renewal reminders before memberships expire and converts website visitors into free trial bookings.
+
+Would you be open to checking out a quick 2-minute demo?
+
+Best regards,
+Ashok Kumar`,
+        waMessage: `Hi {Name}, loved your fitness center {Company}!
+
+We built a simple Gym Management app that automatically sends WhatsApp renewal reminders to members before expiry and books free trial visits.
+
+Can I share a 1-minute video demo?`
+      },
+      cod: {
+        emailSubject: "Cutting fake COD orders & RTO for {Company}",
+        emailBody: `Hi {Name},
+
+Quick question regarding {Company}'s e-commerce store — are fake COD orders or Return to Origin (RTO) eating into your profit margins?
+
+We built a lightweight 1-click WhatsApp order confirmation tool for Shopify/WooCommerce stores that verifies customer address & buying intent before dispatch. It cuts fake COD returns by up to 35%.
+
+Would you be open to a 60-second video demo showing how easily it plugs into your store?
+
+Best regards,
+Ashok Kumar`,
+        waMessage: `Hi {Name}, quick question regarding {Company} — are fake COD returns eating into your margins?
+
+We built a 1-click WhatsApp order verification tool that cuts fake COD returns by up to 35% before shipping.
+
+Can I share a quick 1-minute demo?`
+      },
+      software: {
+        emailSubject: "Lightweight workflow automation for {Company}, {Name}",
+        emailBody: `Hi {Name},
+
+I noticed your work at {Company}. 
+
+We build custom lightweight automation tools, customer follow-up bots, and business dashboards that help growing teams save 2-3 hours of repetitive daily tasks.
+
+Would you be open to a quick chat to see if there are any manual workflows at {Company} we can streamline for you?
+
+Best regards,
+Ashok Kumar`,
+        waMessage: `Hi {Name}, hope you're having a productive day!
+
+I noticed your work at {Company}. We build custom lightweight workflow automation and WhatsApp follow-up bots to save 2+ hours daily.
+
+Open to a quick 1-minute chat?`
+      }
+    };
+
+    function applyEmailPitch(key) {
+      if (PITCH_TEMPLATES[key]) {
+        document.getElementById('emailSubject').value = PITCH_TEMPLATES[key].emailSubject;
+        document.getElementById('emailBody').value = PITCH_TEMPLATES[key].emailBody;
+      }
+    }
+
+    function applyWaPitch(key) {
+      if (PITCH_TEMPLATES[key]) {
+        document.getElementById('waMessageTemplate').value = PITCH_TEMPLATES[key].waMessage;
+      }
+    }
+
+    function switchTab(tab) {
+      document.getElementById('tabUpload').classList.add('hidden');
+      document.getElementById('tabEmail').classList.add('hidden');
+      document.getElementById('tabWhatsapp').classList.add('hidden');
+      document.getElementById('tabLeadfinder').classList.add('hidden');
+
+      const tabs = ['Upload', 'Email', 'Whatsapp', 'Leadfinder'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`tabBtn${t}`);
+        if (btn) btn.className = "tab-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800";
+      });
+
+      if (tab === 'upload') {
+        document.getElementById('tabUpload').classList.remove('hidden');
+        document.getElementById('tabBtnUpload').className = "tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/30";
+      } else if (tab === 'email') {
+        document.getElementById('tabEmail').classList.remove('hidden');
+        document.getElementById('tabBtnEmail').className = "tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-indigo-600 text-white shadow-lg shadow-indigo-600/30";
+      } else if (tab === 'whatsapp') {
+        document.getElementById('tabWhatsapp').classList.remove('hidden');
+        document.getElementById('tabBtnWhatsapp').className = "tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-lg shadow-emerald-600/30";
+      } else if (tab === 'leadfinder') {
+        document.getElementById('tabLeadfinder').classList.remove('hidden');
+        document.getElementById('tabBtnLeadfinder').className = "tab-btn px-4 py-2 rounded-xl text-xs font-bold transition-all bg-purple-600 text-white shadow-lg shadow-purple-600/30";
+      }
+    }
+
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (file) {
+        document.getElementById('uploadPrompt').textContent = `Selected: ${file.name}`;
+      }
+    }
+
+    async function uploadFile() {
+      const fileInput = document.getElementById('fileInput');
+      if (!fileInput.files || fileInput.files.length === 0) {
+        alert("Please select an Excel or CSV file first!");
+        return;
+      }
+
+      const btn = document.getElementById('btnUploadSubmit');
+      btn.disabled = true;
+      btn.textContent = "Processing...";
+
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+      formData.append("default_country_code", document.getElementById('defaultCountryCode').value);
+
+      try {
+        const res = await fetch('/api/upload', { method: 'POST', body: formData });
+        const data = await res.json();
+
+        if (!data.success) {
+          alert("Error: " + data.error);
+          return;
+        }
+
+        currentLeads = data.preview;
+        document.getElementById('navFileName').textContent = data.filename;
+        document.getElementById('navEmailCount').textContent = data.email_count;
+        document.getElementById('navPhoneCount').textContent = data.phone_count;
+        document.getElementById('previewCount').textContent = data.total_leads;
+
+        // Render placeholders
+        const pBox = document.getElementById('placeholdersList');
+        pBox.innerHTML = '';
+        data.columns.forEach(col => {
+          const span = document.createElement('span');
+          span.className = "px-2.5 py-1 rounded-lg bg-indigo-950 border border-indigo-800/60 text-indigo-300 text-xs font-mono cursor-pointer hover:bg-indigo-900";
+          span.textContent = `{${col}}`;
+          span.onclick = () => {
+            navigator.clipboard.writeText(`{${col}}`);
+            alert(`Copied {${col}} to clipboard!`);
+          };
+          pBox.appendChild(span);
+        });
+
+        // Render Table
+        renderLeadsTable(data.preview);
+        alert(`Successfully loaded ${data.total_leads} leads from ${data.filename}!`);
+        switchTab('email');
+
+      } catch (err) {
+        alert("Upload failed: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Upload & Process Leads";
+      }
+    }
+
+    async function loadSampleLeads() {
+      try {
+        const countryCode = document.getElementById('defaultCountryCode').value || "91";
+        const res = await fetch(`/api/load-sample?default_country_code=${countryCode}`, { method: 'POST' });
+        const data = await res.json();
+
+        if (!data.success) {
+          alert("Error: " + data.error);
+          return;
+        }
+
+        currentLeads = data.preview;
+        document.getElementById('navFileName').textContent = data.filename;
+        document.getElementById('navEmailCount').textContent = data.email_count;
+        document.getElementById('navPhoneCount').textContent = data.phone_count;
+        document.getElementById('previewCount').textContent = data.total_leads;
+
+        // Render placeholders
+        const pBox = document.getElementById('placeholdersList');
+        pBox.innerHTML = '';
+        data.columns.forEach(col => {
+          const span = document.createElement('span');
+          span.className = "px-2.5 py-1 rounded-lg bg-indigo-950 border border-indigo-800/60 text-indigo-300 text-xs font-mono cursor-pointer hover:bg-indigo-900";
+          span.textContent = `{${col}}`;
+          span.onclick = () => {
+            navigator.clipboard.writeText(`{${col}}`);
+            alert(`Copied {${col}} to clipboard!`);
+          };
+          pBox.appendChild(span);
+        });
+
+        // Render Table
+        renderLeadsTable(data.preview);
+        alert(`Successfully loaded ${data.total_leads} test leads from ${data.filename}!\n\nAll 4 rows target m1ashok1989@gmail.com with custom names & companies.`);
+        switchTab('email');
+
+      } catch (err) {
+        alert("Failed to load test leads: " + err.message);
+      }
+    }
+
+    function renderLeadsTable(leads) {
+      const tbody = document.getElementById('leadsTableBody');
+      tbody.innerHTML = '';
+      if (!leads || leads.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-500">No leads found.</td></tr>`;
+        return;
+      }
+
+      leads.forEach((l, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-800/40 transition-colors";
+        tr.innerHTML = `
+          <td class="px-4 py-2.5 font-mono text-slate-500">${idx + 1}</td>
+          <td class="px-4 py-2.5 font-bold text-white">${l._name || '-'}</td>
+          <td class="px-4 py-2.5 text-indigo-300">${l._email || '<span class="text-slate-600">None</span>'}</td>
+          <td class="px-4 py-2.5 text-emerald-300 font-mono">${l._clean_phone ? '+' + l._clean_phone : '<span class="text-slate-600">None</span>'}</td>
+          <td class="px-4 py-2.5 text-slate-300">${l._company || '-'}</td>
+          <td class="px-4 py-2.5">
+            <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${l._status_email === 'Sent' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-400'}">
+              ${l._status_email}
+            </span>
+          </td>
+          <td class="px-4 py-2.5">
+            <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${l._status_whatsapp === 'Sent' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-800 text-slate-400'}">
+              ${l._status_whatsapp}
+            </span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function sendTestEmail() {
+      const testTo = document.getElementById('testEmailTo').value;
+      if (!testTo) { alert("Enter a test email recipient!"); return; }
+
+      const btn = document.getElementById('btnTestEmail');
+      btn.disabled = true;
+      btn.textContent = "...";
+
+      const payload = {
+        smtp_host: document.getElementById('smtpHost').value,
+        smtp_port: parseInt(document.getElementById('smtpPort').value),
+        sender_email: document.getElementById('senderEmail').value,
+        sender_password: document.getElementById('senderPassword').value,
+        sender_name: document.getElementById('senderName').value,
+        test_to: testTo,
+        subject: document.getElementById('emailSubject').value,
+        body: document.getElementById('emailBody').value
+      };
+
+      try {
+        const res = await fetch('/api/test-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("✅ Test email sent! Check your inbox.");
+        } else {
+          alert("❌ Test failed: " + data.error);
+        }
+      } catch (err) {
+        alert("Error: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Send Test";
+      }
+    }
+
+    async function startEmailCampaign() {
+      const email = document.getElementById('senderEmail').value;
+      const pass = document.getElementById('senderPassword').value;
+      if (!email || !pass) {
+        alert("Please enter your sender email and Gmail App Password!");
+        return;
+      }
+
+      const payload = {
+        smtp_host: document.getElementById('smtpHost').value,
+        smtp_port: parseInt(document.getElementById('smtpPort').value),
+        sender_email: email,
+        sender_password: pass,
+        sender_name: document.getElementById('senderName').value,
+        subject: document.getElementById('emailSubject').value,
+        body: document.getElementById('emailBody').value,
+        min_delay: parseInt(document.getElementById('minDelay').value) || 5,
+        max_delay: parseInt(document.getElementById('maxDelay').value) || 8
+      };
+
+      try {
+        const res = await fetch('/api/send-emails', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.error) { alert("Error: " + data.error); return; }
+
+        document.getElementById('emailStatusText').textContent = "Running 🚀";
+        startEmailPolling();
+      } catch (err) {
+        alert("Failed to start: " + err.message);
+      }
+    }
+
+    async function stopEmailCampaign() {
+      await fetch('/api/stop-emails', { method: 'POST' });
+      document.getElementById('emailStatusText').textContent = "Stopping...";
+    }
+
+    function startEmailPolling() {
+      if (pollingInterval) clearInterval(pollingInterval);
+      pollingInterval = setInterval(async () => {
+        try {
+          const res = await fetch('/api/email-status');
+          const data = await res.json();
+
+          document.getElementById('emailProgressNumbers').textContent = `${data.current} / ${data.total} (${data.sent_count} Sent, ${data.failed_count} Failed)`;
+          document.getElementById('emailProgressBar').style.width = `${data.progress_pct}%`;
+
+          // Render logs
+          const box = document.getElementById('emailLogsBox');
+          box.innerHTML = '';
+          data.logs.forEach(l => {
+            const div = document.createElement('div');
+            div.className = l.status === 'success' ? 'text-emerald-400' : (l.status === 'error' ? 'text-rose-400' : 'text-slate-400');
+            div.textContent = `[${l.time}] ${l.message}`;
+            box.appendChild(div);
+          });
+          box.scrollTop = box.scrollHeight;
+
+          if (!data.is_running && data.total > 0 && data.current >= data.total) {
+            document.getElementById('emailStatusText').textContent = "Completed ✅";
+            clearInterval(pollingInterval);
+          }
+        } catch (e) {}
+      }, 2000);
+    }
+
+    async function generateWhatsAppQueue() {
+      const template = document.getElementById('waMessageTemplate').value;
+      const countryCode = document.getElementById('defaultCountryCode').value;
+
+      try {
+        const res = await fetch('/api/generate-whatsapp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message_template: template, default_country_code: countryCode })
+        });
+        const data = await res.json();
+        if (data.error) { alert("Error: " + data.error); return; }
+
+        document.getElementById('waQueueCount').textContent = data.total;
+        renderWhatsAppTable(data.queue);
+      } catch (err) {
+        alert("Failed to generate queue: " + err.message);
+      }
+    }
+
+    function renderWhatsAppTable(queue) {
+      const tbody = document.getElementById('waTableBody');
+      tbody.innerHTML = '';
+      if (!queue || queue.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-8 text-slate-500">No leads with phone numbers.</td></tr>`;
+        return;
+      }
+
+      queue.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        tr.id = `wa-row-${item.id}`;
+        tr.className = "hover:bg-slate-800/40 transition-colors";
+        tr.innerHTML = `
+          <td class="px-3 py-3 text-slate-500">${idx + 1}</td>
+          <td class="px-3 py-3 font-bold text-white">${item.name}</td>
+          <td class="px-3 py-3 text-emerald-400 font-mono">+${item.phone}</td>
+          <td class="px-3 py-3 text-slate-300 max-w-xs truncate" title="${item.message}">${item.message}</td>
+          <td class="px-3 py-3 text-right">
+            <button onclick="dispatchWhatsAppItem(${item.id}, '${item.wa_web_link}')" id="wa-btn-${item.id}"
+              class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center gap-1 ml-auto shadow">
+              <span>Send WA ↗</span>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function dispatchWhatsAppItem(leadId, link) {
+      window.open(link, '_blank');
+      const btn = document.getElementById(`wa-btn-${leadId}`);
+      if (btn) {
+        btn.className = "px-3 py-1.5 rounded-lg bg-slate-800 text-emerald-400 font-bold text-xs flex items-center gap-1 ml-auto border border-emerald-800";
+        btn.textContent = "Dispatched ✅";
+      }
+      fetch('/api/update-lead-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lead_id: leadId, channel: 'whatsapp', status: 'Sent' })
+      });
+    }
+
+    function exportUpdatedExcel() {
+      window.location.href = '/api/export-results';
+    }
+
+    async function generateCityLeads() {
+      const city = document.getElementById('leadCitySelect').value;
+      const btn = document.getElementById('btnGenerateCityLeads');
+      const tag = document.getElementById('extractedStatusTag');
+      
+      btn.disabled = true;
+      btn.innerHTML = `<span class="animate-spin">⏳</span> Extracting Leads & Writing Excel...`;
+      tag.textContent = `Extracting ${city}...`;
+      tag.className = "text-[11px] font-mono px-2.5 py-1 rounded-lg bg-purple-950 border border-purple-800 text-purple-300";
+
+      try {
+        const isIndia = city.includes("India") || city.includes("Delhi") || city.includes("Mumbai");
+        const res = await fetch('/api/generate-leads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ city: city, default_country_code: isIndia ? "91" : "1" })
+        });
+        const data = await res.json();
+        if (!data.success) { alert("Error: " + data.error); return; }
+
+        currentLeads = data.preview;
+        document.getElementById('navFileName').textContent = data.filename;
+        document.getElementById('navEmailCount').textContent = data.email_count;
+        document.getElementById('navPhoneCount').textContent = data.phone_count;
+        document.getElementById('previewCount').textContent = data.total_leads;
+        document.getElementById('extractedCount').textContent = data.total_leads;
+
+        renderExtractedTable(data.preview);
+        renderLeadsTable(data.preview);
+
+        tag.textContent = `✅ ${data.total_leads} Leads Saved to ${data.filename}`;
+        tag.className = "text-[11px] font-mono px-2.5 py-1 rounded-lg bg-emerald-950 border border-emerald-800 text-emerald-300";
+        alert(`🎉 Success! Found ${data.total_leads} verified real estate leads for ${city}!\n\nAll saved to Excel: ${data.filename}\nYou can now click "Launch Email Campaign" to start outreach!`);
+      } catch (err) {
+        alert("Failed to generate leads: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span>⚡ Extract City Leads & Write to Excel</span>`;
+      }
+    }
+
+    async function crawlAgencyWebsite() {
+      const site = document.getElementById('targetWebsiteInput').value.trim();
+      if (!site) { alert("Enter an agency website domain!"); return; }
+
+      const btn = document.getElementById('btnCrawlWebsite');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="animate-spin">⏳</span> Crawling Contact Pages for Emails...`;
+
+      try {
+        const res = await fetch('/api/scrape-website', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ website: site, default_country_code: "1" })
+        });
+        const data = await res.json();
+        if (!data.success) { alert("Crawl error: " + data.error); return; }
+
+        document.getElementById('extractedCount').textContent = data.total_leads;
+        renderExtractedTable(data.preview);
+        alert(`🎯 Found ${data.found_emails} verified agent emails from ${site}!\nAdded to leads list and Excel sheet.`);
+      } catch (err) {
+        alert("Error: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span>🔎 Crawl & Extract Agent Emails</span>`;
+      }
+    }
+
+    function renderExtractedTable(leads) {
+      const tbody = document.getElementById('extractedTableBody');
+      tbody.innerHTML = '';
+      if (!leads || leads.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-16 text-slate-500">No leads extracted yet.</td></tr>`;
+        return;
+      }
+      leads.forEach((l, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-800/40 transition-colors";
+        tr.innerHTML = `
+          <td class="px-3 py-3 text-slate-500 font-mono">${idx + 1}</td>
+          <td class="px-3 py-3 font-bold text-white">${l.name || l.Name || l._name || '-'}</td>
+          <td class="px-3 py-3 text-indigo-300 font-mono">${l.email || l.Email || l._email || '-'}</td>
+          <td class="px-3 py-3 text-emerald-400 font-mono">${l.phone || l.Phone || l._clean_phone || '-'}</td>
+          <td class="px-3 py-3 text-slate-300">${l.company || l.Company || l._company || '-'}</td>
+          <td class="px-3 py-3 text-slate-400 text-[11px] font-mono">${l.website || l.Website || '-'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Auto-load high-converting Real Estate pitch by default
+    window.addEventListener('DOMContentLoaded', () => {
+      applyEmailPitch('re_us');
+      applyWaPitch('re_us');
+    });
+  </script>
+</body>
+</html>
